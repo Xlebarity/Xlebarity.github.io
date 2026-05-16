@@ -9,37 +9,75 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: #fff; font-family: sans-serif; }
         iframe { width: 100%; height: 100%; border: none; }
         #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; font-size: 16px; }
+        
+        /* Панель переключения плееров сверху, если захочется сменить источник */
+        .source-switcher { position: absolute; top: 10px; left: 10px; z-index: 100; display: flex; gap: 8px; }
+        .btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: #fff; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; backdrop-filter: blur(5px); }
+        .btn.active { background: #2481cc; border-color: #2481cc; font-weight: bold; }
     </style>
 </head>
 <body>
+
+    <div class="source-switcher">
+        <button class="btn active" onclick="switchPlayer('ru')">🇷🇺 Источник 1 (Русский)</button>
+        <button class="btn" onclick="switchPlayer('eng')">🇬🇧 Источник 2 (Eng/Multi)</button>
+    </div>
 
     <div id="loading">🎬 Загрузка плеера...</div>
     <div id="player-container" style="width:100%; height:100%;"></div>
 
     <script>
-        // Инициализация Telegram Web App
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
         const urlParams = new URLSearchParams(window.location.search);
         const tmdbId = urlParams.get('tmdb');
+        
+        let currentSource = 'ru';
 
-        if (tmdbId) {
-            // Используем стабильный и быстрый iframe плеер по TMDB ID
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
-            iframe.allowFullscreen = true;
+        function loadPlayer() {
+            if (!tmdbId) {
+                document.getElementById('loading').innerText = 'Ошибка: Не передан ID фильма.';
+                return;
+            }
+
+            const container = document.getElementById('player-container');
+            container.innerHTML = ''; // Очищаем контейнер перед сменой плеера
             
-            // Как только iframe загрузится, скрываем текст загрузки
+            const loader = document.getElementById('loading');
+            if (loader) loader.style.display = 'block';
+
+            const iframe = document.createElement('iframe');
+            iframe.allowFullscreen = true;
+
+            if (currentSource === 'ru') {
+                // Плеер, ориентированный строго на СНГ-базы и русскую озвучку
+                iframe.src = `https://vidsrc.cc/v2/embed/movie/${tmdbId}?ds_lang=ru`;
+            } else {
+                // Запасной мультиязычный плеер
+                iframe.src = `https://vidsrc.to/embed/movie/${tmdbId}`;
+            }
+            
             iframe.onload = function() {
-                const loader = document.getElementById('loading');
                 if (loader) loader.style.display = 'none';
             };
 
-            document.getElementById('player-container').appendChild(iframe);
-        } else {
-            document.getElementById('loading').innerText = 'Ошибка: Не передан ID фильма.';
+            container.appendChild(iframe);
         }
+
+        function switchPlayer(source) {
+            if (currentSource === source) return;
+            currentSource = source;
+            
+            // Переключаем активную кнопку визуально
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadPlayer();
+        }
+
+        // Первый запуск плеера
+        loadPlayer();
     </script>
 </body>
 </html>
