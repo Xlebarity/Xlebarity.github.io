@@ -6,9 +6,29 @@
     <title>GmovieA Player</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: #fff; font-family: sans-serif; }
-        iframe { width: 100%; height: 100%; border: none; }
-        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; font-size: 16px; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: #000; 
+            color: #fff; 
+            font-family: sans-serif; 
+        }
+        iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+        }
+        #loading { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            z-index: 10; 
+            font-size: 16px; 
+        }
     </style>
 </head>
 <body>
@@ -17,12 +37,11 @@
     <div id="player-container" style="width:100%; height:100%;"></div>
 
     <script>
-        // Инициализируем Telegram Web App
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
         const urlParams = new URLSearchParams(window.location.search);
-        // Принимаем из бота именно IMDB ID (он начинается на tt)
+        // Ждем от бота именно параметр imdb (?imdb=tt...)
         const imdbId = urlParams.get('imdb'); 
 
         if (imdbId) {
@@ -31,8 +50,7 @@
             
             const iframe = document.createElement('iframe');
             
-            // Ссылка строго по присланной документации (вывод по IMDB ID)
-            // Добавили параметр fullheight=1 для правильного отображения на весь экран смартфона
+            // Вывод по IMDB ID строго по твоей документации
             iframe.src = `https://tarantino.factorios.live/show/show/imdb/${imdbId}?fullheight=1`;
             iframe.allowFullscreen = true;
             
