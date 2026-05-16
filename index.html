@@ -2,39 +2,41 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GmovieA Player</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: #fff; font-family: sans-serif; }
-        .kinobox_player { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: 100%; border: none; }
         #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div id="loading">🎬 Поиск источников для вас...</div>
-    <div class="kinobox_player"></div>
+    <div id="loading">🎬 Загрузка плеера...</div>
+    <div id="player-container" style="width:100%; height:100%;"></div>
 
-    <script src="https://kinobox.tv/assets/kinobox.js"></script>
     <script>
-        // Инициализируем Telegram Web App
+        // Инициализация Telegram Web App
         window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand(); // Принудительно разворачиваем окно на весь экран телефона
+        window.Telegram.WebApp.expand();
 
         const urlParams = new URLSearchParams(window.location.search);
         const tmdbId = urlParams.get('tmdb');
 
         if (tmdbId) {
-            kbox('.kinobox_player', {
-                search: { tmdb: tmdbId },
-                menu: { default: 'custom' },
-                done: function() {
-                    // Плеер успешно загрузился — скрываем текст загрузки
-                    const loader = document.getElementById('loading');
-                    if (loader) loader.style.display = 'none';
-                }
-            });
+            // Используем стабильный и быстрый iframe плеер по TMDB ID
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+            iframe.allowFullscreen = true;
+            
+            // Как только iframe загрузится, скрываем текст загрузки
+            iframe.onload = function() {
+                const loader = document.getElementById('loading');
+                if (loader) loader.style.display = 'none';
+            };
+
+            document.getElementById('player-container').appendChild(iframe);
         } else {
             document.getElementById('loading').innerText = 'Ошибка: Не передан ID фильма.';
         }
