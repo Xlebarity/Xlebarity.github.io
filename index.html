@@ -22,17 +22,18 @@
         window.Telegram.WebApp.expand();
 
         const urlParams = new URLSearchParams(window.location.search);
-        const tmdbId = urlParams.get('tmdb');
+        // Принимаем из бота именно IMDB ID (он начинается на tt)
+        const imdbId = urlParams.get('imdb'); 
 
-        if (tmdbId) {
+        if (imdbId) {
             const container = document.getElementById('player-container');
             const loader = document.getElementById('loading');
             
             const iframe = document.createElement('iframe');
             
-            // Подключаем FlixCDN по TMDB ID
-            // Задаем параметр языка, чтобы приоритет был у русской дорожки
-            iframe.src = `https://flixcdn.to/embed/movie/${tmdbId}?lang=ru`;
+            // Ссылка строго по присланной документации (вывод по IMDB ID)
+            // Добавили параметр fullheight=1 для правильного отображения на весь экран смартфона
+            iframe.src = `https://tarantino.factorios.live/show/show/imdb/${imdbId}?fullheight=1`;
             iframe.allowFullscreen = true;
             
             iframe.onload = function() {
