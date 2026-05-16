@@ -6,28 +6,41 @@
     <title>GmovieA Player</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; }
-        .kinobox_player { width: 100%; height: 100%; border: none; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; color: #fff; font-family: sans-serif; }
+        iframe { width: 100%; height: 100%; border: none; }
+        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div class="kinobox_player"></div>
+    <div id="loading">🎬 Загрузка плеера с русской озвучкой...</div>
+    <div id="player-container" style="width:100%; height:100%;"></div>
 
     <script>
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
+        // Инициализируем Telegram Web App
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand(); // Разворачиваем во весь экран
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const tmdbId = urlParams.get('tmdb');
+        const urlParams = new URLSearchParams(window.location.search);
+        const tmdbId = urlParams.get('tmdb');
 
-    if (tmdbId) {
-        const iframe = document.createElement('iframe');
-        // Плеер Collaps (база СНГ, строго на русском)
-        iframe.src = `https://api.delivembbed.cc/embed/tmdb/${tmdbId}`;
-        iframe.allowFullscreen = true;
-        document.body.appendChild(iframe);
-    }
-</script>
+        if (tmdbId) {
+            const container = document.getElementById('player-container');
+            const loader = document.getElementById('loading');
+            
+            const iframe = document.createElement('iframe');
+            // Используем безотказный Collaps по TMDB ID (база СНГ)
+            iframe.src = `https://api.delivembbed.cc/embed/tmdb/${tmdbId}`;
+            iframe.allowFullscreen = true;
+            
+            iframe.onload = function() {
+                if (loader) loader.style.display = 'none';
+            };
+
+            container.appendChild(iframe);
+        } else {
+            document.getElementById('loading').innerText = 'Ошибка: Не передан ID фильма.';
+        }
+    </script>
 </body>
 </html>
