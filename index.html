@@ -14,21 +14,20 @@
 
     <div class="kinobox_player"></div>
 
-    <script src="https://kinobox.tv/assets/kinobox.js"></script>
     <script>
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const tmdbId = urlParams.get('tmdb');
+    const urlParams = new URLSearchParams(window.location.search);
+    const tmdbId = urlParams.get('tmdb');
 
-        if (tmdbId) {
-            // Запуск конструкции Kinobox (она подтянет все русские озвучки)
-            kbox('.kinobox_player', {
-                search: { tmdb: tmdbId },
-                menu: { default: 'custom' }
-            });
-        }
-    </script>
+    if (tmdbId) {
+        const iframe = document.createElement('iframe');
+        // Плеер Collaps (база СНГ, строго на русском)
+        iframe.src = `https://api.delivembbed.cc/embed/tmdb/${tmdbId}`;
+        iframe.allowFullscreen = true;
+        document.body.appendChild(iframe);
+    }
+</script>
 </body>
 </html>
