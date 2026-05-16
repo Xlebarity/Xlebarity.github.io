@@ -13,13 +13,13 @@
 </head>
 <body>
 
-    <div id="loading">🎬 Загрузка плеера с русской озвучкой...</div>
+    <div id="loading">🎬 Подключаем русский плеер...</div>
     <div id="player-container" style="width:100%; height:100%;"></div>
 
     <script>
-        // Инициализируем Telegram Web App
+        // Сигнализируем Telegram Web App
         window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand(); // Разворачиваем во весь экран
+        window.Telegram.WebApp.expand();
 
         const urlParams = new URLSearchParams(window.location.search);
         const tmdbId = urlParams.get('tmdb');
@@ -29,8 +29,10 @@
             const loader = document.getElementById('loading');
             
             const iframe = document.createElement('iframe');
-            // Используем безотказный Collaps по TMDB ID (база СНГ)
-            iframe.src = `https://api.delivembbed.cc/embed/tmdb/${tmdbId}`;
+            
+            // Используем стабильное зеркало Kodik, работающее в Web App
+            // Параметр &hide_selectors=1 убирает лишний мусор, оставляя только плеер
+            iframe.src = `https://player.asb.su/list?tmdb_id=${tmdbId}&hide_selectors=1`;
             iframe.allowFullscreen = true;
             
             iframe.onload = function() {
