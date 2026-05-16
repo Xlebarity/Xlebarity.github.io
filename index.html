@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <div id="loading">🎬 Загрузка актуального плеера...</div>
+    <div id="loading">🎬 Загрузка плеера FlixCDN...</div>
     <div id="player-container" style="width:100%; height:100%;"></div>
 
     <script>
@@ -30,8 +30,9 @@
             
             const iframe = document.createElement('iframe');
             
-            // Подключаем плеер через рабочий домен Kinohub по TMDB ID
-            iframe.src = `https://on.kinohub.vip/embed/tmdb/${tmdbId}`;
+            // Подключаем FlixCDN по TMDB ID
+            // Задаем параметр языка, чтобы приоритет был у русской дорожки
+            iframe.src = `https://flixcdn.to/embed/movie/${tmdbId}?lang=ru`;
             iframe.allowFullscreen = true;
             
             iframe.onload = function() {
