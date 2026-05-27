@@ -11,8 +11,8 @@
             background-color: #000000; overflow: hidden;
             display: flex; justify-content: center; align-items: center;
         }
-        #player-container { width: 100%; height: 100%; }
-        iframe { width: 100%; height: 100%; border: none; }
+        #player-container { width: 100%; height: 100%; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
         .error-msg { color: #ffffff; text-align: center; font-family: sans-serif; padding: 20px; }
     </style>
 </head>
@@ -22,7 +22,27 @@
     <script type="text/javascript">
         const tg = window.Telegram.WebApp;
         tg.ready();
-        tg.expand(); // Открываем сразу на весь экран
+
+        // --- АКТИВАЦИЯ FULLSCREEN (Mini Apps 2.0) ---
+        try {
+            // Проверяем, поддерживает ли текущая версия Telegram настоящий Fullscreen
+            if (typeof tg.requestFullscreen === 'function') {
+                tg.requestFullscreen();
+            } else {
+                // Если Telegram старый — просто вытягиваем шторку вверх
+                tg.expand();
+            }
+
+            // Принудительно блокируем ориентацию в альбомном (горизонтальном) режиме для удобного просмотра кино
+            if (typeof tg.lockOrientation === 'function') {
+                tg.lockOrientation();
+            }
+        } catch (e) {
+            console.error("Ошибка активации полноэкранного режима Telegram:", e);
+            // Фолбек на случай непредвиденных ошибок API
+            tg.expand(); 
+        }
+        // ---------------------------------------------
 
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -41,7 +61,8 @@
             iframe.setAttribute('allowfullscreen', 'true');
             iframe.setAttribute('webkitallowfullscreen', 'true');
             iframe.setAttribute('mozallowfullscreen', 'true');
-            iframe.setAttribute('allow', 'autoplay; encrypted-media; gyroscope; picture-in-picture');
+            // Добавлено 'fullscreen', чтобы iframe имел легальный доступ к полноэкранному API браузера внутри WebView
+            iframe.setAttribute('allow', 'autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen');
             
             container.appendChild(iframe);
         } else {
